@@ -20,7 +20,7 @@ RUN echo ${VERSION} > /app/version.txt
 WORKDIR /app
 CMD ["/app/glyph-api"]
 HEALTHCHECK --interval=15s --timeout=15s \
-    CMD curl --fail http://localhost:8000/v1/healthcheck || exit 1
+    CMD curl --fail http://localhost:8081/v1/healthcheck || exit 1
 
 FROM common AS debug
 COPY --from=builder-debug /app/target/debug/glyph-api /app/

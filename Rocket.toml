@@ -1,7 +1,7 @@
 ## defaults for _all_ profiles
 [default]
 address = "0.0.0.0"
-port = 8000
+port = 8081
 # limits = { json = "1 MiB" }
 
 ## set only when compiled in debug mode, i.e, `cargo build`

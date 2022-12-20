@@ -4,9 +4,9 @@ IMAGE=1noro/glyph-api
 target=debug
 CONTAINER=glyph-api-container
 VERSION=$(shell git log -n 1 --pretty=format:"%H")
-EXTERNAL_PORT=8081
-CONTAINER_PORT=8000
-LOCAL_URL=http://api.glyph.localhost:$(EXTERNAL_PORT)
+HOST_PORT=8081
+CONTAINER_PORT=8081
+LOCAL_URL=http://api.glyph.localhost:$(HOST_PORT)
 
 export DOCKER_BUILDKIT=1
 
@@ -14,26 +14,26 @@ all: help
 
 .PHONY: build
 build:
-	@docker build -f Dockerfile --target $(target) --build-arg VERSION=$(VERSION) -t $(IMAGE):$(target) .
+	docker build --target $(target) \
+		--build-arg VERSION=$(VERSION) \
+		-t $(IMAGE):$(target) .
 
 .PHONY: build-release
-build-release:
-	@docker build -f Dockerfile --target release --build-arg VERSION=$(VERSION) -t $(IMAGE):release .
+build-release: target=release
+build-release: build
 
 .PHONY: build-all
-build-all:
-	@docker build -f Dockerfile --target debug --build-arg VERSION=$(VERSION) -t $(IMAGE):debug .
-	@docker build -f Dockerfile --target release --build-arg VERSION=$(VERSION) -t $(IMAGE):release .
+build-all: build build-release
 
 .PHONY: up
 up:
-	@docker run -d --rm -p $(EXTERNAL_PORT):$(CONTAINER_PORT) --name $(CONTAINER) $(IMAGE):$(target) 
+	@docker run -d --rm -p $(HOST_PORT):$(CONTAINER_PORT) --name $(CONTAINER) $(IMAGE):$(target) 
 	@echo "Running $(CONTAINER) in $(LOCAL_URL)"
 	@echo "test if it is ok with: curl $(LOCAL_URL)/v1/healthcheck"
 
 .PHONY: up-release
 up-release:
-	@docker run -d --rm -p $(EXTERNAL_PORT):$(CONTAINER_PORT) --name $(CONTAINER) $(IMAGE):release
+	@docker run -d --rm -p $(HOST_PORT):$(CONTAINER_PORT) --name $(CONTAINER) $(IMAGE):release
 	@echo "Running $(CONTAINER) in $(LOCAL_URL)"
 	@echo "test if it is ok with: curl $(LOCAL_URL)/v1/healthcheck"
 
