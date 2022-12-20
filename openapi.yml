@@ -1,0 +1,23 @@
+openapi: '3.0.2'
+info:
+  title: glyph-api
+  version: '1.0'
+  description: Rest API to obtain a random string based on an input text and a simple configuration.
+servers:
+  - url: https://api.glyph.rat.la/v1
+    description: Production server
+  - url: http://api.glyph.localhost/v1
+    description: Local development server
+paths:
+  /healthcheck:
+    get:
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: App liveness prove.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
