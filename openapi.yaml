@@ -13,7 +13,6 @@ paths:
   /healthcheck:
     get:
       description: 'App liveness prove'
-      parameters: []
       responses:
         '200':
           description: 'The app is working'
@@ -27,10 +26,132 @@ paths:
               schema:
                 type: string
               example: OK
-
+  /generate/text:
+    get:
+      description: 'Generates a 64-character text based on the parameters passed in the body of the request'
+      # parameters: []
+      requestBody:
+        description: Generation parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextGenerationParameters'
+            example:
+              $ref: doc/examples/text-generation-parameters.json
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: 'The generated text encoded in base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedText'
+              example:
+                $ref: doc/examples/generated-text-body.json
+            text/plain:
+              schema:
+                type: string
+              example: 'MGRAIyRmYUIxMzF7fTc4OCI7NDlDP0E3LSs5NzAhQ0QkJTkmKigpQTNGXTo0ZGJhPjcsZUIzPTkzRUJmNyUxJg=='
+        '400':
+          description: 'Bad request status message'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+              example:
+                $ref: doc/examples/bad-request-body.json
+            text/plain:
+              schema:
+                type: string
+              example: 'Error: Bad request'
+  /generate/image:
+    get:
+      description: 'Generates a image based on the parameters passed in the body of the request'
+      requestBody:
+        description: Generation parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageGenerationParameters'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: 'The URL where the generated image is hosted encoded in base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedImage'
+            text/plain:
+              schema:
+                type: string
+  /generate/geroglyph:
+    get:
+      description: 'Generates an emoji text based on the parameters passed in the body of the request'
+      requestBody:
+        description: Generation parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeroglyphGenerationParameters'
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: 'The generated emoji text encoded in base64'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedText'
+            text/plain:
+              schema:
+                type: string
 components:
   schemas:
     Status:
       properties:
         status:
           type: string
+        description:
+          type: string
+    TextGenerationParameters:
+      properties:
+        method:
+          type: string
+          enum: [default, numbers, numbers_letters]
+        input:
+          type: string
+          description: 'Text encoded in base64'
+    ImageGenerationParameters:
+      properties:
+        method:
+          type: string
+          enum: [default]
+        input:
+          type: string
+          description: 'Text encoded in base64'
+    GeroglyphGenerationParameters:
+      properties:
+        method:
+          type: string
+          enum: [default]
+        input:
+          type: string
+          description: 'Text encoded in base64'
+    GeneratedText:
+      properties:
+        text:
+          type: string
+          description: 'Text encoded in base64'
+    GeneratedImage:
+      properties:
+        url:
+          type: string
+          description: 'URL encoded in base64'
